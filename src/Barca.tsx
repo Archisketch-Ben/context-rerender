@@ -1,22 +1,16 @@
-import { useFirstTeamMembers } from "./TeamProvider";
+import { useBarcaTeamMembers } from "./TeamProvider";
 
 export const Barca = () => {
-  const [state, dispatch] = useFirstTeamMembers();
-
-  console.log("Barca rendered");
+  const [state, dispatch] = useBarcaTeamMembers();
 
   return (
     <>
       <h1>Barcelona</h1>
       <ul>
-        {state.barca.map((player) => (
+        {state.map((player) => (
           <li key={player}>
             {player}
-            <button
-              onClick={() =>
-                dispatch({ type: "remove", team: "barca", player })
-              }
-            >
+            <button onClick={() => dispatch({ type: "remove", player })}>
               Remove
             </button>
           </li>

@@ -6,64 +6,110 @@ import {
   type ReactNode,
 } from "react";
 
-type Team = "barca" | "madrid";
-
 type Action =
-  | { type: "add"; team: Team; player: string }
-  | { type: "remove"; team: Team; player: string };
+  | { type: "add"; player: string }
+  | { type: "remove"; player: string };
 
-type State = {
-  [key in Team]: string[];
-};
+type Members = string[];
 
-const FirstTeamMembersContext = createContext<
-  [State, Dispatch<Action>] | undefined
+const BarcaTeamMembersContext = createContext<
+  [Members, Dispatch<Action>] | undefined
 >(undefined);
 
-const initialState: State = {
+const MadridTeamMembersContext = createContext<
+  [Members, Dispatch<Action>] | undefined
+>(undefined);
+
+const initialBarcaState: { barca: Members } = {
   barca: ["messi", "suarez", "neymar"],
-  madrid: ["ronaldo", "bale", "benzema"],
 };
 
-const reducer = (state: State, action: Action): State => {
+const initialMadridState: { madrid: Members } = {
+  madrid: ["ronaldo", "bale", "modric"],
+};
+
+const barcaReducer = (state: typeof initialBarcaState, action: Action) => {
   switch (action.type) {
     case "add":
-      return {
-        ...state,
-        [action.team]: [...state[action.team], action.player],
-      };
+      return { barca: [...state.barca, action.player] };
     case "remove":
       return {
-        ...state,
-        [action.team]: state[action.team].filter(
-          (player) => player !== action.player
-        ),
+        barca: state.barca.filter((player) => player !== action.player),
       };
     default:
       return state;
   }
 };
 
-const FirstTeamMembersProvider = ({ children }: { children: ReactNode }) => {
-  const value = useReducer(reducer, initialState);
-
-  return (
-    <FirstTeamMembersContext.Provider value={value}>
-      {children}
-    </FirstTeamMembersContext.Provider>
-  );
+const madridReducer = (state: typeof initialMadridState, action: Action) => {
+  switch (action.type) {
+    case "add":
+      return { madrid: [...state.madrid, action.player] };
+    case "remove":
+      return {
+        madrid: state.madrid.filter((player) => player !== action.player),
+      };
+    default:
+      return state;
+  }
 };
 
-const useFirstTeamMembers = () => {
-  const context = useContext(FirstTeamMembersContext);
-
-  if (context === undefined) {
+export const useBarcaTeamMembers = () => {
+  const context = useContext(BarcaTeamMembersContext);
+  if (!context) {
     throw new Error(
-      "useFirstTeamMembers must be used within a FirstTeamMembersProvider"
+      "useBarcaTeamMembers must be used within a FirstTeamMembersProvider"
     );
   }
-
   return context;
 };
 
-export { FirstTeamMembersProvider, useFirstTeamMembers };
+export const useMadridTeamMembers = () => {
+  const context = useContext(MadridTeamMembersContext);
+  if (!context) {
+    throw new Error(
+      "useMadridTeamMembers must be used within a FirstTeamMembersProvider"
+    );
+  }
+  return context;
+};
+
+export const BarcaTeamMembersProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [state, dispatch] = useReducer(barcaReducer, initialBarcaState);
+
+  return (
+    <BarcaTeamMembersContext.Provider value={[state.barca, dispatch]}>
+      {children}
+    </BarcaTeamMembersContext.Provider>
+  );
+};
+
+export const MadridTeamMembersProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [state, dispatch] = useReducer(madridReducer, initialMadridState);
+
+  return (
+    <MadridTeamMembersContext.Provider value={[state.madrid, dispatch]}>
+      {children}
+    </MadridTeamMembersContext.Provider>
+  );
+};
+
+export const FirstTeamMembersProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  return (
+    <BarcaTeamMembersProvider>
+      <MadridTeamMembersProvider>{children}</MadridTeamMembersProvider>
+    </BarcaTeamMembersProvider>
+  );
+};
