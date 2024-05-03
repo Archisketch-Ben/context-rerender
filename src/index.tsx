@@ -2,17 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { FirstTeamMembersProvider } from "./TeamProvider";
-import { Teams } from "./Teams";
+import { ZustandTeams } from "./ZustandTeams";
+// import { FirstTeamMembersProvider } from "./TeamProvider";
+// import { Teams } from "./Teams";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <FirstTeamMembersProvider>
+    {/* <FirstTeamMembersProvider>
       <Teams />
-    </FirstTeamMembersProvider>
+    </FirstTeamMembersProvider> */}
+    <ZustandTeams />
   </React.StrictMode>
 );
 

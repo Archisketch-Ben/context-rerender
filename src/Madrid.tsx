@@ -5,7 +5,7 @@ export const Madrid = () => {
 
   return (
     <>
-      <h1>Real Madrid</h1>
+      <h3>Real Madrid</h3>
       <ul>
         {state.map((player) => (
           <li key={player}>
